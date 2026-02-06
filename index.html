@@ -18,7 +18,12 @@
             background: rgba(0, 0, 0, 0.85); padding: 30px;
             border-radius: 30px; backdrop-filter: blur(15px);
             border: 2px solid #0f0; box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
+            max-height: 85vh; overflow-y: auto;
         }
+        /* Стилизация скроллбара внутри контейнера */
+        .container::-webkit-scrollbar { width: 5px; }
+        .container::-webkit-scrollbar-thumb { background: #0f0; border-radius: 10px; }
+
         .avatar { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #0f0; margin-bottom: 15px; box-shadow: 0 0 20px #0f0; transition: 0.5s; object-fit: cover; }
         .avatar:hover { transform: scale(1.1) rotate(5deg); }
         
@@ -35,6 +40,14 @@
         .yt-btn { background: #FF0000; }
         .gh-btn { background: #333; }
         .reboot-btn { background: #0f0; color: #000; margin-top: 20px; font-family: inherit; }
+
+        /* Секция EDITS */
+        .edits-btn { background: #6a1b9a; border: 1px solid #9c27b0; }
+        #edits-content { display: none; margin-top: 15px; padding: 10px; border: 1px solid #0f0; border-radius: 15px; background: rgba(0,255,0,0.05); }
+        .video-card { margin-bottom: 20px; text-align: left; }
+        .video-card label { color: #0f0; font-size: 0.8rem; display: block; margin-bottom: 5px; }
+        .video-wrapper { position: relative; padding-bottom: 177.77%; /* Соотношение сторон для Shorts (9:16) */ height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
         #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; min-height: 100px; }
     </style>
@@ -55,6 +68,23 @@
             <a href="https://www.youtube.com/channel/UCAvL2ebX8FjNhU-XFQD8H2A" target="_blank" class="btn yt-btn"><i class="fab fa-youtube"></i> YouTube</a>
             <a href="https://github.com/vlad87776" target="_blank" class="btn gh-btn"><i class="fab fa-github"></i> GitHub</a>
             
+            <button class="btn edits-btn" onclick="toggleEdits()"><i class="fas fa-video"></i> OPEN MY EDITS</button>
+            
+            <div id="edits-content">
+                <div class="video-card">
+                    <label>> LOADED: EDIT | 8K ULTRA HD</label>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/P_Hzl2s2taM" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <label>> LOADED: Edit cars | 4K</label>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/AWAFcJzAxOo" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
             <button class="btn reboot-btn" onclick="startReboot()"><i class="fas fa-power-off"></i> REBOOT SYSTEM</button>
         </div>
         <div id="reboot-log"></div>
@@ -63,7 +93,6 @@
     <script>
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-
         let columns, drops;
         const fontSize = 18;
         const letters = '01';
@@ -90,6 +119,19 @@
 
         initMatrix();
         setInterval(drawMatrix, 35);
+
+        // Функция раскрытия EDITS
+        function toggleEdits() {
+            const edits = document.getElementById('edits-content');
+            const btn = document.querySelector('.edits-btn');
+            if (edits.style.display === 'block') {
+                edits.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-video"></i> OPEN MY EDITS';
+            } else {
+                edits.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-times"></i> CLOSE EDITS';
+            }
+        }
 
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
@@ -138,4 +180,3 @@
     </script>
 </body>
 </html>
-

@@ -46,10 +46,9 @@
         #edits-content { display: none; margin-top: 15px; padding: 10px; border: 1px solid #0f0; border-radius: 15px; background: rgba(0,255,0,0.05); }
         .video-card { margin-bottom: 20px; text-align: left; }
         .video-card label { color: #0f0; font-size: 0.8rem; display: block; margin-bottom: 5px; }
-        .video-wrapper { position: relative; padding-bottom: 177.77%; height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; margin-bottom: 10px;}
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* ВСТРОЕННЫЙ ЧАТ */
         .chat-container { margin-top: 25px; border: 1px solid #0f0; border-radius: 15px; padding: 15px; background: rgba(0, 10, 0, 0.8); text-align: left; }
         .chat-title { color: #0f0; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.3); padding-bottom: 5px; }
         #chat-box { height: 150px; overflow-y: auto; color: #0f0; font-size: 0.85rem; margin-bottom: 10px; scrollbar-width: thin; scrollbar-color: #0f0 transparent; }
@@ -92,6 +91,12 @@
                         <iframe src="https://www.youtube.com/embed/P_Hzl2s2taM" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
+                <div class="video-card">
+                    <label>> LOADED: Edit cars | 4K</label>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/AWAFcJzAxOo" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
             </div>
 
             <div class="chat-container">
@@ -110,56 +115,42 @@
     </div>
 
     <script>
-        // ЧАТ ЛОГИКА
         const chatBox = document.getElementById('chat-box');
         const chatInput = document.getElementById('chat-input');
 
         function sendMessage() {
             const text = chatInput.value.trim();
             if (text === "") return;
-
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             const msgHtml = `<div><span style="color:#888">[${time}]</span> <span style="color:#0f0">USER_NODE:</span> ${text}</div>`;
-            
             chatBox.innerHTML += msgHtml;
             chatInput.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Сохраняем в память браузера (локально)
             let history = JSON.parse(localStorage.getItem('chat_history') || "[]");
             history.push({time, text});
-            localStorage.setItem('chat_history', JSON.stringify(history.slice(-15))); // храним последние 15
+            localStorage.setItem('chat_history', JSON.stringify(history.slice(-15)));
         }
 
-        // Отправка по Enter
         chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
         });
 
-        // Загрузка истории и просмотров
         window.onload = () => {
-            // Загрузка чата
             let history = JSON.parse(localStorage.getItem('chat_history') || "[]");
             history.forEach(msg => {
                 chatBox.innerHTML += `<div><span style="color:#888">[${msg.time}]</span> <span style="color:#0f0">USER_NODE:</span> ${msg.text}</div>`;
             });
             chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Просмотры
             let count = localStorage.getItem('page_view_count') || 0;
             count++;
             localStorage.setItem('page_view_count', count);
             animateValue("visitor-count", 0, count, 2000);
         };
 
-        // Запрет просмотра кода
         document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 74))) {
-                return false;
-            }
+            if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 74))) return false;
         };
 
-        // Матрица
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         let columns, drops;

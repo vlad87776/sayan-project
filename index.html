@@ -34,13 +34,13 @@
         .counter-box { color: #0f0; margin: 20px 0; font-size: 1.1rem; border: 1px dashed #0f0; padding: 10px; border-radius: 10px; }
         #visitor-count { font-weight: bold; font-size: 1.4rem; text-shadow: 0 0 10px #0f0; }
 
-        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; text-decoration: none; font-weight: bold; border-radius: 12px; text-transform: uppercase; transition: 0.3s; color: #fff; gap: 10px; font-size: 1rem; border: none; width: 100%; cursor: pointer; box-sizing: border-box; }
+        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; text-decoration: none; font-weight: bold; border-radius: 12px; text-transform: uppercase; transition: 0.3s; color: #fff; gap: 10px; font-size: 1rem; border: none; width: 100%; cursor: pointer; box-sizing: border-box; font-family: inherit; }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
         
         .tg-btn { background: #24A1DE; }
         .yt-btn { background: #FF0000; }
         .gh-btn { background: #333; }
-        .reboot-btn { background: #0f0; color: #000; margin-top: 20px; font-family: inherit; }
+        .reboot-btn { background: #0f0; color: #000; margin-top: 20px; }
 
         .edits-btn { background: #6a1b9a; border: 1px solid #9c27b0; }
         #edits-content { display: none; margin-top: 15px; padding: 10px; border: 1px solid #0f0; border-radius: 15px; background: rgba(0,255,0,0.05); }
@@ -49,11 +49,13 @@
         .video-wrapper { position: relative; padding-bottom: 177.77%; height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        .comments-section { margin-top: 25px; border-top: 1px solid #0f0; padding-top: 20px; }
-        .comments-title { color: #0f0; font-size: 0.9rem; margin-bottom: 15px; text-align: left; }
-        
-        /* Стили для нового чата */
-        .chat-frame { border: 1px solid #0f0; border-radius: 10px; background: rgba(0, 20, 0, 0.5); overflow: hidden; }
+        /* ВСТРОЕННЫЙ ЧАТ */
+        .chat-container { margin-top: 25px; border: 1px solid #0f0; border-radius: 15px; padding: 15px; background: rgba(0, 10, 0, 0.8); text-align: left; }
+        .chat-title { color: #0f0; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 255, 0, 0.3); padding-bottom: 5px; }
+        #chat-box { height: 150px; overflow-y: auto; color: #0f0; font-size: 0.85rem; margin-bottom: 10px; scrollbar-width: thin; scrollbar-color: #0f0 transparent; }
+        .chat-input-area { display: flex; gap: 5px; }
+        #chat-input { background: transparent; border: 1px solid #0f0; color: #0f0; padding: 8px; border-radius: 5px; flex-grow: 1; font-family: inherit; outline: none; }
+        #chat-send { background: #0f0; color: #000; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
         #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; min-height: 100px; }
     </style>
@@ -79,7 +81,7 @@
             
             <div id="edits-content">
                 <div class="video-card">
-                    <label>> LOADED: ULTIMATE BEASTS | From Asphalt to Ice</label>
+                    <label>> LOADED: ULTIMATE BEASTS</label>
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/kX8OcdDYEuY" frameborder="0" allowfullscreen></iframe>
                     </div>
@@ -90,18 +92,14 @@
                         <iframe src="https://www.youtube.com/embed/P_Hzl2s2taM" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
-                <div class="video-card">
-                    <label>> LOADED: Edit cars | 4K</label>
-                    <div class="video-wrapper">
-                        <iframe src="https://www.youtube.com/embed/AWAFcJzAxOo" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                </div>
             </div>
 
-            <div class="comments-section">
-                <div class="comments-title">> SYSTEM_CHAT (LIVE_SYNC):</div>
-                <div class="chat-frame">
-                    <iframe src="https://www3.cbox.ws/box/?boxid=3534567&boxtag=sayanchat" width="100%" height="300" allowtransparency="yes" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>
+            <div class="chat-container">
+                <div class="chat-title">> SYSTEM_CHAT_V1.0: ONLINE</div>
+                <div id="chat-box"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type message..." autocomplete="off">
+                    <button id="chat-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
 
@@ -112,6 +110,48 @@
     </div>
 
     <script>
+        // ЧАТ ЛОГИКА
+        const chatBox = document.getElementById('chat-box');
+        const chatInput = document.getElementById('chat-input');
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (text === "") return;
+
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const msgHtml = `<div><span style="color:#888">[${time}]</span> <span style="color:#0f0">USER_NODE:</span> ${text}</div>`;
+            
+            chatBox.innerHTML += msgHtml;
+            chatInput.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Сохраняем в память браузера (локально)
+            let history = JSON.parse(localStorage.getItem('chat_history') || "[]");
+            history.push({time, text});
+            localStorage.setItem('chat_history', JSON.stringify(history.slice(-15))); // храним последние 15
+        }
+
+        // Отправка по Enter
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Загрузка истории и просмотров
+        window.onload = () => {
+            // Загрузка чата
+            let history = JSON.parse(localStorage.getItem('chat_history') || "[]");
+            history.forEach(msg => {
+                chatBox.innerHTML += `<div><span style="color:#888">[${msg.time}]</span> <span style="color:#0f0">USER_NODE:</span> ${msg.text}</div>`;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Просмотры
+            let count = localStorage.getItem('page_view_count') || 0;
+            count++;
+            localStorage.setItem('page_view_count', count);
+            animateValue("visitor-count", 0, count, 2000);
+        };
+
         // Запрет просмотра кода
         document.onkeydown = function(e) {
             if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 74))) {
@@ -149,20 +189,13 @@
         initMatrix();
         setInterval(drawMatrix, 35);
 
-        // Показать/скрыть видео
         function toggleEdits() {
             const edits = document.getElementById('edits-content');
             const btn = document.querySelector('.edits-btn');
-            if (edits.style.display === 'block') {
-                edits.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-video"></i> OPEN MY EDITS';
-            } else {
-                edits.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-times"></i> CLOSE EDITS';
-            }
+            edits.style.display = (edits.style.display === 'block') ? 'none' : 'block';
+            btn.innerHTML = (edits.style.display === 'block') ? '<i class="fas fa-times"></i> CLOSE EDITS' : '<i class="fas fa-video"></i> OPEN MY EDITS';
         }
 
-        // Счетчик просмотров
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
@@ -175,25 +208,11 @@
             window.requestAnimationFrame(step);
         }
 
-        window.onload = () => {
-            let count = localStorage.getItem('page_view_count') || 0;
-            count++;
-            localStorage.setItem('page_view_count', count);
-            animateValue("visitor-count", 0, count, 2000);
-        };
-
-        // Перезагрузка
         function startReboot() {
-            const content = document.getElementById('content');
+            document.getElementById('content').style.display = 'none';
             const log = document.getElementById('reboot-log');
-            content.style.display = 'none';
             log.style.display = 'block';
-            const lines = [
-                "> Инициализация OMEN 17...",
-                "> Проверка видеокарты RTX...",
-                "> Синхронизация с GitHub...",
-                "> СИСТЕМА ПЕРЕЗАГРУЖЕНА УСПЕШНО."
-            ];
+            const lines = ["> Инициализация...", "> Проверка RTX...", "> Очистка кэша...", "> ГОТОВО."];
             let i = 0;
             const interval = setInterval(() => {
                 if(i < lines.length) {
@@ -201,7 +220,7 @@
                     i++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => location.reload(), 1500);
+                    setTimeout(() => location.reload(), 1000);
                 }
             }, 600);
         }

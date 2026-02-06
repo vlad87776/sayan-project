@@ -51,6 +51,9 @@
 
         .comments-section { margin-top: 25px; border-top: 1px solid #0f0; padding-top: 20px; }
         .comments-title { color: #0f0; font-size: 0.9rem; margin-bottom: 15px; text-align: left; }
+        
+        /* Стили для нового чата */
+        .chat-frame { border: 1px solid #0f0; border-radius: 10px; background: rgba(0, 20, 0, 0.5); overflow: hidden; }
 
         #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; min-height: 100px; }
     </style>
@@ -58,6 +61,7 @@
 <body oncontextmenu="return false;"> 
     <div class="scanline"></div>
     <canvas id="matrix"></canvas>
+    
     <div class="container">
         <div id="content">
             <img src="https://t.me/i/userpic/320/SAYAN_ORIGINAL.jpg" class="avatar" alt="Avatar">
@@ -94,28 +98,28 @@
                 </div>
             </div>
 
-<div class="comments-section">
-    <div class="comments-title">> SYSTEM_COMMENTS (LIVE_PROTOCOL):</div>
-    <script async src="https://telegram.org/js/telegram-widget.js?22" 
-        data-telegram-discussion="SAYAN_EDITS_OFFICIAL" 
-        data-comments-limit="5" 
-        data-color="00FF00" 
-        data-dark="1">
-    </script>
-</div>
+            <div class="comments-section">
+                <div class="comments-title">> SYSTEM_CHAT (LIVE_SYNC):</div>
+                <div class="chat-frame">
+                    <iframe src="https://www3.cbox.ws/box/?boxid=3534567&boxtag=sayanchat" width="100%" height="300" allowtransparency="yes" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>
+                </div>
+            </div>
 
             <button class="btn reboot-btn" onclick="startReboot()"><i class="fas fa-power-off"></i> REBOOT SYSTEM</button>
         </div>
+        
         <div id="reboot-log"></div>
     </div>
 
     <script>
+        // Запрет просмотра кода
         document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'I'.charCodeAt(0)))) {
+            if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 74))) {
                 return false;
             }
         };
 
+        // Матрица
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         let columns, drops;
@@ -145,6 +149,7 @@
         initMatrix();
         setInterval(drawMatrix, 35);
 
+        // Показать/скрыть видео
         function toggleEdits() {
             const edits = document.getElementById('edits-content');
             const btn = document.querySelector('.edits-btn');
@@ -157,6 +162,7 @@
             }
         }
 
+        // Счетчик просмотров
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
@@ -176,6 +182,7 @@
             animateValue("visitor-count", 0, count, 2000);
         };
 
+        // Перезагрузка
         function startReboot() {
             const content = document.getElementById('content');
             const log = document.getElementById('reboot-log');
@@ -185,7 +192,6 @@
                 "> Инициализация OMEN 17...",
                 "> Проверка видеокарты RTX...",
                 "> Синхронизация с GitHub...",
-                "> Очистка временных файлов...",
                 "> СИСТЕМА ПЕРЕЗАГРУЖЕНА УСПЕШНО."
             ];
             let i = 0;
@@ -204,5 +210,3 @@
     </script>
 </body>
 </html>
-
-

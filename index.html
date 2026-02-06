@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAYAN ORIGINAL - OFFICIAL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+        
+        /* Хакерская полоса сканирования */
+        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(0deg, rgba(0, 255, 0, 0) 0%, rgba(0, 255, 0, 0.1) 50%, rgba(0, 255, 0, 0) 100%); z-index: 3; animation: scan 4s linear infinite; pointer-events: none; }
+        @keyframes scan { 0% { top: -100px; } 100% { top: 100%; } }
+
+        .container { 
+            position: relative; z-index: 2;
+            max-width: 400px; width: 90%; text-align: center;
+            background: rgba(0, 0, 0, 0.85); padding: 40px;
+            border-radius: 30px; backdrop-filter: blur(15px);
+            border: 2px solid #0f0; box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
+        }
+        .avatar { width: 150px; height: 150px; border-radius: 50%; border: 3px solid #0f0; margin-bottom: 20px; box-shadow: 0 0 25px #0f0; transition: 0.5s; }
+        .avatar:hover { transform: scale(1.05) rotate(5deg); }
+        
+        .glitch { font-size: 2rem; font-weight: bold; color: #fff; text-transform: uppercase; position: relative; text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; animation: glitch 725ms infinite; }
+        @keyframes glitch { 0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; } 16% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; } 100% { text-shadow: -0.025em 0 0 #00fffc, -0.025em -0.025em 0 #fc00ff, -0.025em -0.05em 0 #fffc00; } }
+
+        .btn { display: flex; align-items: center; justify-content: center; padding: 18px; margin: 15px 0; text-decoration: none; font-weight: bold; border-radius: 15px; text-transform: uppercase; transition: 0.3s; color: #fff; gap: 12px; font-size: 1.1rem; border: none; width: 100%; cursor: pointer; }
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,255,0,0.2); }
+        
+        .tg-btn { background: #24A1DE; }
+        .yt-btn { background: #FF0000; box-shadow: 0 0 15px rgba(255,0,0,0.5); }
+        .gh-btn { background: #333; }
+        .reboot-btn { background: #0f0; color: #000; }
+
+        #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.9rem; line-height: 1.5; margin-top: 20px; border-top: 1px solid #0f0; padding-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <canvas id="matrix"></canvas>
+    <div class="container">
+        <div id="content">
+            <img src="https://t.me/i/userpic/320/SAYAN_ORIGINAL.jpg" class="avatar">
+            <div class="glitch">SAYAN ORIGINAL</div>
+            <p style="color:#0f0; letter-spacing: 2px; margin: 20px 0;">[ SYSTEM: OMEN_ACTIVE ]</p>
+            
+            <a href="https://t.me/SAYAN_ORIGINAL" class="btn tg-btn"><i class="fab fa-telegram"></i> Telegram</a>
+            <a href="https://www.youtube.com/channel/UCAvL2ebX8FjNhU-XFQD8H2A" class="btn yt-btn"><i class="fab fa-youtube"></i> YouTube</a>
+            <a href="https://github.com" class="btn gh-btn"><i class="fab fa-github"></i> GitHub</a>
+            <button class="btn reboot-btn" onclick="startReboot()"><i class="fas fa-sync-alt"></i> REBOOT SYSTEM</button>
+        </div>
+        <div id="reboot-log"></div>
+    </div>
+
+    <script>
+        function startReboot() {
+            const content = document.getElementById('content');
+            const log = document.getElementById('reboot-log');
+            content.style.display = 'none';
+            log.style.display = 'block';
+            const lines = [
+                "> Инициализация OMEN 17...",
+                "> Проверка видеокарты RTX...",
+                "> Очистка кэша браузера...",
+                "> Загрузка новых скриптов...",
+                "> СИСТЕМА ПЕРЕЗАГРУЖЕНА УСПЕШНО."
+            ];
+            let i = 0;
+            const interval = setInterval(() => {
+                if(i < lines.length) {
+                    log.innerHTML += lines[i] + "<br>";
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => location.reload(), 1500);
+                }
+            }, 700);
+        }
+
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const letters = '01';
+        const fontSize = 18;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 35);
+        window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    </script>
+</body>
+</html>

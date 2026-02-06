@@ -101,11 +101,20 @@
             window.requestAnimationFrame(step);
         }
 
-        // Логика счетчика (демо-версия для стабильности)
+        // Логика ЧЕСТНОГО счетчика
         window.onload = () => {
-            // Здесь можно подключить API, но пока сделаем красивую накрутку для стиля
-            const randomViews = Math.floor(Math.random() * (1500 - 1200) + 1200);
-            animateValue("visitor-count", 0, randomViews, 2500);
+            // Получаем текущее число из памяти или ставим 0
+            let count = localStorage.getItem('page_view_count');
+            if (count === null) {
+                count = 0;
+            }
+            // Увеличиваем на 1
+            count++;
+            // Сохраняем обратно
+            localStorage.setItem('page_view_count', count);
+            
+            // Запускаем красивую анимацию до нового числа
+            animateValue("visitor-count", 0, count, 2000);
         };
 
         // Логи перезагрузки

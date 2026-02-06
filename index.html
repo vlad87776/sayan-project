@@ -20,7 +20,7 @@
             background: rgba(0, 0, 0, 0.9); padding: 30px;
             border-radius: 30px; backdrop-filter: blur(15px);
             border: 2px solid #0f0; box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
-            max-height: 90vh; overflow-y: auto;
+            max-height: 85vh; overflow-y: auto;
         }
         .container::-webkit-scrollbar { width: 5px; }
         .container::-webkit-scrollbar-thumb { background: #0f0; border-radius: 10px; }
@@ -48,17 +48,6 @@
         .video-card label { color: #0f0; font-size: 0.8rem; display: block; margin-bottom: 5px; }
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        /* ИСПРАВЛЕННЫЙ БЛОК ЧАТА */
-        .chat-container { 
-            margin-top: 25px; 
-            border: 1px solid #0f0; 
-            border-radius: 15px; 
-            padding: 10px; 
-            background: #000; 
-            text-align: left; 
-            min-height: 450px; /* Увеличено, чтобы влезла строка ввода */
-        }
         
         #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; }
     </style>
@@ -94,15 +83,6 @@
                     <div class="video-wrapper">
                         <iframe src="https://www.youtube.com/embed/P_Hzl2s2taM" frameborder="0" allowfullscreen></iframe>
                     </div>
-                </div>
-            </div>
-
-            <div class="chat-container">
-                <div style="color: #0f0; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid #0f0;">> GLOBAL_SYSTEM_CHAT: LIVE</div>
-                <div id="chat-box" style="width:100%; height:400px;">
-                    <script id="cid0020000395460515152" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 100%;height: 400px;">
-                    {"handle":"sayan-original","arch":"js","styles":{"a":"000000","b":100,"c":"00ff00","d":"00ff00","e":"000000","g":"00ff00","h":"000000","k":"00ff00","l":"00ff00","m":"00ff00","n":"FFFFFF","p":"10","q":"000000","r":100,"pos":"inline","cv":1,"cvbg":"000000","cvw":200,"cvh":30,"ticker":1,"fwtickm":1}}
-                    </script>
                 </div>
             </div>
 
@@ -176,7 +156,7 @@
             document.getElementById('content').style.display = 'none';
             const log = document.getElementById('reboot-log');
             log.style.display = 'block';
-            const lines = ["> Инициализация ядра...", "> Очистка временных файлов...", "> Перезапуск сетевых протоколов...", "> СИСТЕМА ГОТОВА."];
+            const lines = ["> Инициализация ядра...", "> Очистка кэша...", "> Перезапуск сетевых протоколов...", "> СИСТЕМА ОБНОВЛЕНА."];
             let i = 0;
             const interval = setInterval(() => {
                 if(i < lines.length) {

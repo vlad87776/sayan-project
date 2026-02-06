@@ -20,7 +20,6 @@
             border: 2px solid #0f0; box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
             max-height: 85vh; overflow-y: auto;
         }
-        /* Стилизация скроллбара внутри контейнера */
         .container::-webkit-scrollbar { width: 5px; }
         .container::-webkit-scrollbar-thumb { background: #0f0; border-radius: 10px; }
 
@@ -41,13 +40,16 @@
         .gh-btn { background: #333; }
         .reboot-btn { background: #0f0; color: #000; margin-top: 20px; font-family: inherit; }
 
-        /* Секция EDITS */
         .edits-btn { background: #6a1b9a; border: 1px solid #9c27b0; }
         #edits-content { display: none; margin-top: 15px; padding: 10px; border: 1px solid #0f0; border-radius: 15px; background: rgba(0,255,0,0.05); }
         .video-card { margin-bottom: 20px; text-align: left; }
         .video-card label { color: #0f0; font-size: 0.8rem; display: block; margin-bottom: 5px; }
-        .video-wrapper { position: relative; padding-bottom: 177.77%; /* Соотношение сторон для Shorts (9:16) */ height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
+        .video-wrapper { position: relative; padding-bottom: 177.77%; height: 0; overflow: hidden; border-radius: 10px; border: 1px solid #0f0; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* Секция комментариев */
+        .comments-section { margin-top: 25px; border-top: 1px solid #0f0; padding-top: 20px; }
+        .comments-title { color: #0f0; font-size: 0.9rem; margin-bottom: 15px; text-align: left; }
 
         #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; min-height: 100px; }
     </style>
@@ -85,6 +87,11 @@
                 </div>
             </div>
 
+            <div class="comments-section">
+                <div class="comments-title">> SYSTEM_COMMENTS:</div>
+                <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-discussion="SAYAN_ORIGINAL/1" data-comments-limit="5" data-color="343638" data-dark="1"></script>
+            </div>
+
             <button class="btn reboot-btn" onclick="startReboot()"><i class="fas fa-power-off"></i> REBOOT SYSTEM</button>
         </div>
         <div id="reboot-log"></div>
@@ -120,7 +127,6 @@
         initMatrix();
         setInterval(drawMatrix, 35);
 
-        // Функция раскрытия EDITS
         function toggleEdits() {
             const edits = document.getElementById('edits-content');
             const btn = document.querySelector('.edits-btn');

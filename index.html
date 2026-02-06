@@ -19,25 +19,24 @@
             border-radius: 30px; backdrop-filter: blur(15px);
             border: 2px solid #0f0; box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
         }
-        .avatar { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #0f0; margin-bottom: 15px; box-shadow: 0 0 20px #0f0; transition: 0.5s; }
+        .avatar { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #0f0; margin-bottom: 15px; box-shadow: 0 0 20px #0f0; transition: 0.5s; object-fit: cover; }
         .avatar:hover { transform: scale(1.1) rotate(5deg); }
         
         .glitch { font-size: 1.8rem; font-weight: bold; color: #fff; text-transform: uppercase; position: relative; text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; animation: glitch 725ms infinite; }
         @keyframes glitch { 0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; } 16% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; } 100% { text-shadow: -0.025em 0 0 #00fffc, -0.025em -0.025em 0 #fc00ff, -0.025em -0.05em 0 #fffc00; } }
 
-        /* Счётчик */
         .counter-box { color: #0f0; margin: 20px 0; font-size: 1.1rem; border: 1px dashed #0f0; padding: 10px; border-radius: 10px; }
         #visitor-count { font-weight: bold; font-size: 1.4rem; text-shadow: 0 0 10px #0f0; }
 
-        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; text-decoration: none; font-weight: bold; border-radius: 12px; text-transform: uppercase; transition: 0.3s; color: #fff; gap: 10px; font-size: 1rem; border: none; width: 100%; cursor: pointer; }
+        .btn { display: flex; align-items: center; justify-content: center; padding: 15px; margin: 10px 0; text-decoration: none; font-weight: bold; border-radius: 12px; text-transform: uppercase; transition: 0.3s; color: #fff; gap: 10px; font-size: 1rem; border: none; width: 100%; cursor: pointer; box-sizing: border-box; }
         .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
         
         .tg-btn { background: #24A1DE; }
         .yt-btn { background: #FF0000; }
         .gh-btn { background: #333; }
-        .reboot-btn { background: #0f0; color: #000; margin-top: 20px; }
+        .reboot-btn { background: #0f0; color: #000; margin-top: 20px; font-family: inherit; }
 
-        #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; }
+        #reboot-log { display: none; color: #0f0; text-align: left; font-size: 0.85rem; line-height: 1.4; margin-top: 15px; border-top: 1px solid #0f0; padding-top: 10px; min-height: 100px; }
     </style>
 </head>
 <body>
@@ -45,7 +44,7 @@
     <canvas id="matrix"></canvas>
     <div class="container">
         <div id="content">
-            <img src="https://t.me/i/userpic/320/SAYAN_ORIGINAL.jpg" class="avatar">
+            <img src="https://t.me/i/userpic/320/SAYAN_ORIGINAL.jpg" class="avatar" alt="Avatar">
             <div class="glitch">SAYAN ORIGINAL</div>
             
             <div class="counter-box">
@@ -62,15 +61,19 @@
     </div>
 
     <script>
-        // Матрица на фоне
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = '01';
+
+        let columns, drops;
         const fontSize = 18;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        const letters = '01';
+
+        function initMatrix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            drops = Array(columns).fill(1);
+        }
 
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -84,9 +87,10 @@
                 drops[i]++;
             }
         }
+
+        initMatrix();
         setInterval(drawMatrix, 35);
 
-        // Плавная анимация цифр
         function animateValue(id, start, end, duration) {
             const obj = document.getElementById(id);
             let startTimestamp = null;
@@ -94,30 +98,18 @@
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 obj.innerText = Math.floor(progress * (end - start) + start);
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
+                if (progress < 1) window.requestAnimationFrame(step);
             };
             window.requestAnimationFrame(step);
         }
 
-        // Логика ЧЕСТНОГО счетчика
         window.onload = () => {
-            // Получаем текущее число из памяти или ставим 0
-            let count = localStorage.getItem('page_view_count');
-            if (count === null) {
-                count = 0;
-            }
-            // Увеличиваем на 1
+            let count = localStorage.getItem('page_view_count') || 0;
             count++;
-            // Сохраняем обратно
             localStorage.setItem('page_view_count', count);
-            
-            // Запускаем красивую анимацию до нового числа
             animateValue("visitor-count", 0, count, 2000);
         };
 
-        // Логи перезагрузки
         function startReboot() {
             const content = document.getElementById('content');
             const log = document.getElementById('reboot-log');
@@ -142,7 +134,8 @@
             }, 600);
         }
 
-        window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+        window.onresize = () => initMatrix();
     </script>
 </body>
 </html>
+

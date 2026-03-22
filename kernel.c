@@ -5,9 +5,10 @@
 #define VGA_HEIGHT 25
 
 #define COLOR_BLACK 0x0
-#define COLOR_WHITE 0xF
 #define COLOR_BLUE 0x1
 #define COLOR_CYAN 0x3
+#define COLOR_LIGHT_GRAY 0x7
+#define COLOR_WHITE 0xF
 #define COLOR_YELLOW 0xE
 
 static volatile uint16_t* const VGA_BUFFER = (uint16_t*)0xB8000;
@@ -53,6 +54,12 @@ static void write_string_at(const char* s, uint8_t color, uint16_t row, uint16_t
     }
 }
 
+static void delay_ticks(uint32_t ticks) {
+    for (volatile uint32_t i = 0; i < ticks; ++i) {
+        __asm__ volatile ("nop");
+    }
+}
+
 static void draw_boot_menu(menu_item_t selected) {
     const uint8_t bg = (COLOR_WHITE << 4) | COLOR_BLUE;
     const uint8_t title = (COLOR_YELLOW << 4) | COLOR_BLUE;
@@ -84,7 +91,35 @@ static void show_boot_sequence(void) {
     write_string_at("[OK] VGA driver", text, 11, 30);
     write_string_at("[OK] Input subsystem (polling)", text, 12, 30);
     write_string_at("[OK] Boot menu", text, 13, 30);
-    write_string_at("System is ready.", text, 15, 31);
+    write_string_at("[OK] Desktop shell", text, 14, 30);
+    write_string_at("System is ready.", text, 16, 31);
+
+    delay_ticks(30000000);
+}
+
+static void draw_desktop(void) {
+    const uint8_t wallpaper = (COLOR_LIGHT_GRAY << 4) | COLOR_BLUE;
+    const uint8_t panel = (COLOR_BLACK << 4) | COLOR_LIGHT_GRAY;
+    const uint8_t text = (COLOR_WHITE << 4) | COLOR_BLUE;
+    const uint8_t window = (COLOR_BLACK << 4) | COLOR_LIGHT_GRAY;
+
+    clear_screen(wallpaper);
+
+    for (size_t x = 0; x < VGA_WIDTH; ++x) {
+        VGA_BUFFER[x] = vga_entry(' ', panel);
+    }
+    write_string_at("SAYAN OS Desktop", panel, 0, 2);
+    write_string_at("Explorer: /SystemR", panel, 0, 25);
+
+    write_string_at("[ SYSTEMR FILES ]", window, 4, 28);
+    write_string_at("kernel.bin", text, 7, 30);
+    write_string_at("boot.asm", text, 8, 30);
+    write_string_at("linker.ld", text, 9, 30);
+    write_string_at("grub.cfg", text, 10, 30);
+    write_string_at("init.sys", text, 11, 30);
+    write_string_at("drivers.sys", text, 12, 30);
+
+    write_string_at("Commands: R=return to menu | H=halt | B=reboot", text, 22, 12);
 }
 
 static void reboot_system(void) {
@@ -108,6 +143,49 @@ static menu_item_t prev_item(menu_item_t item) {
     return (menu_item_t)(((int)item + MENU_COUNT - 1) % MENU_COUNT);
 }
 
+static uint8_t read_scancode(void) {
+    while (!(inb(0x64) & 0x01)) {
+    }
+    return inb(0x60);
+}
+
+static void run_desktop_loop(void) {
+    uint8_t extended = 0;
+
+    draw_desktop();
+
+    for (;;) {
+        uint8_t scancode = read_scancode();
+
+        if (scancode == 0xE0) {
+            extended = 1;
+            continue;
+        }
+
+        if (scancode & 0x80) {
+            extended = 0;
+            continue;
+        }
+
+        if (!extended && scancode == 0x13) {  // R
+            return;
+        }
+
+        if (!extended && scancode == 0x23) {  // H
+            clear_screen((COLOR_WHITE << 4) | COLOR_BLUE);
+            write_string_at("System halted.", (COLOR_WHITE << 4) | COLOR_BLUE, 12, 33);
+            halt_system();
+        }
+
+        if (!extended && scancode == 0x30) {  // B
+            reboot_system();
+            halt_system();
+        }
+
+        extended = 0;
+    }
+}
+
 void kernel_main(void) {
     menu_item_t selected = MENU_BOOT;
     uint8_t extended = 0;
@@ -115,11 +193,7 @@ void kernel_main(void) {
     draw_boot_menu(selected);
 
     for (;;) {
-        if (!(inb(0x64) & 0x01)) {
-            continue;
-        }
-
-        uint8_t scancode = inb(0x60);
+        uint8_t scancode = read_scancode();
 
         if (scancode == 0xE0) {
             extended = 1;
@@ -140,6 +214,8 @@ void kernel_main(void) {
         } else if (scancode == 0x1C) {
             if (selected == MENU_BOOT) {
                 show_boot_sequence();
+                run_desktop_loop();
+                draw_boot_menu(selected);
             } else if (selected == MENU_REBOOT) {
                 reboot_system();
                 halt_system();
